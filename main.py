@@ -1,60 +1,41 @@
 #!/usr/bin/env python3
 """
-Keep Window Active Script
-Moves mouse and double-clicks at random intervals to prevent screen timeout/inactivity.
+Keep Active - Entry Point
+
+This script provides the main entry point for the Keep Active utility.
+It initializes and runs the keep-active controller with default settings.
+
+Usage:
+    python main.py
+
+The script will:
+    1. Move the mouse to the center of the screen at random intervals (30-60s)
+    2. Perform a double-click to simulate activity
+    3. Continue until interrupted with Ctrl+C
+
+Safety:
+    The pyautogui failsafe is enabled by default. Moving the mouse to the
+    top-left corner of the screen will abort the script immediately.
 """
 
-import random
-import sys
-import time
-
-import pyautogui
+from keep_active import KeepActiveConfig, KeepActiveController
 
 
-def main():
-    print("Keep Active Script Started")
-    print("Press Ctrl+C to stop")
-    print("-" * 40)
+def main() -> None:
+    """
+    Main entry point for the Keep Active utility.
 
-    # Failsafe: moving mouse to top-left corner will abort
-    pyautogui.FAILSAFE = True
+    Creates a controller with default configuration and starts the
+    keep-active loop. The loop runs indefinitely until interrupted
+    by the user with Ctrl+C.
+    """
+    # Create configuration with default settings
+    # Customize by passing parameters: KeepActiveConfig(min_wait_seconds=20, ...)
+    config = KeepActiveConfig()
 
-    try:
-        iteration = 0
-        while True:
-            iteration += 1
-
-            # Random interval between 30-60 seconds
-            wait_time = random.randint(30, 60)
-            print(f"\n[{iteration}] Waiting {wait_time} seconds...")
-            time.sleep(wait_time)
-
-            # Get current mouse position
-            current_x, current_y = pyautogui.position()
-
-            # Move to a safe location (center of screen) or nearby
-            screen_width, screen_height = pyautogui.size()
-            target_x = screen_width // 2
-            target_y = screen_height // 2
-
-            print(
-                f"Moving mouse from ({current_x}, {current_y}) to ({target_x}, {target_y})"
-            )
-            pyautogui.moveTo(target_x, target_y, duration=0.5)
-
-            # Double click
-            print("Double clicking...")
-            pyautogui.doubleClick()
-
-            # Small pause after click
-            time.sleep(0.5)
-
-    except KeyboardInterrupt:
-        print("\n\nScript stopped by user")
-        sys.exit(0)
-    except Exception as e:
-        print(f"\nError: {e}")
-        sys.exit(1)
+    # Create and run the controller
+    controller = KeepActiveController(config=config)
+    controller.run()
 
 
 if __name__ == "__main__":

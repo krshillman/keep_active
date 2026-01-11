@@ -1,7 +1,31 @@
 [project]
 name = "keep-active"
 version = "0.1.0"
-description = "Add your description here"
+description = "A utility to prevent screen timeout by simulating mouse activity"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "pyautogui>=0.9.54",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+]
+
+[project.scripts]
+keep-active = "main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.hatch.build.targets.wheel]
+packages = ["keep_active"]
