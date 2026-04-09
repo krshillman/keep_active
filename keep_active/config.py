@@ -42,6 +42,8 @@ class KeepActiveConfig:
     enable_failsafe: bool = field(default=True)
     use_screen_center: bool = field(default=True)
     verbose: bool = field(default=True)
+    coding_mode: bool = field(default=False)
+    typing_speed: float = field(default=0.05)
 
     def __post_init__(self) -> None:
         """
@@ -60,6 +62,8 @@ class KeepActiveConfig:
             raise ValueError("mouse_move_duration cannot be negative")
         if self.post_click_pause < 0:
             raise ValueError("post_click_pause cannot be negative")
+        if self.typing_speed < 0:
+            raise ValueError("typing_speed cannot be negative")
 
         # Check logical constraints
         if self.min_wait_seconds > self.max_wait_seconds:
