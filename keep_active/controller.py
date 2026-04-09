@@ -12,6 +12,7 @@ from typing import Callable, Optional
 
 from keep_active.config import KeepActiveConfig
 from keep_active.mouse import MouseOperations, Position, PyAutoGUIMouseOperations
+from keep_active.snippets import get_random_snippet
 
 
 class KeepActiveController:
@@ -74,7 +75,8 @@ class KeepActiveController:
         Configures failsafe settings and prints startup messages.
         """
         self.mouse.set_failsafe(self.config.enable_failsafe)
-        self._log("Keep Active Script Started")
+        mode = "Coding Mode" if self.config.coding_mode else "Click Mode"
+        self._log(f"Keep Active Script Started ({mode})")
         self._log("Press Ctrl+C to stop")
         self._log("-" * 40)
 
@@ -112,6 +114,31 @@ class KeepActiveController:
         # Small pause after click
         self._sleep(self.config.post_click_pause)
 
+    def _perform_coding_activity(self) -> None:
+        """
+        Perform a coding activity cycle: click the window and type code.
+
+        This method:
+        1. Gets current mouse position
+        2. Moves mouse to target window (screen center)
+        3. Clicks to focus the window
+        4. Types a random SQL or Python code snippet
+        """
+        current_pos = self.mouse.get_position()
+        target_pos = self._calculate_target_position()
+
+        self._log(f"Moving mouse from {current_pos} to {target_pos}")
+        self.mouse.move_to(target_pos, duration=self.config.mouse_move_duration)
+
+        self._log("Clicking to focus window...")
+        self.mouse.click()
+        self._sleep(self.config.post_click_pause)
+
+        snippet = get_random_snippet()
+        preview = snippet.strip().split("\n")[0]
+        self._log(f"Typing code snippet: {preview}...")
+        self.mouse.type_text(snippet, interval=self.config.typing_speed)
+
     def _run_iteration(self) -> None:
         """
         Run a single iteration of the keep-active loop.
@@ -127,7 +154,10 @@ class KeepActiveController:
         self._log(f"\n[{self._iteration}] Waiting {wait_time} seconds...")
         self._sleep(wait_time)
 
-        self._perform_activity()
+        if self.config.coding_mode:
+            self._perform_coding_activity()
+        else:
+            self._perform_activity()
 
     def run(self, max_iterations: Optional[int] = None) -> None:
         """

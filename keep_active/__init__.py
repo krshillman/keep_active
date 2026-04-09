@@ -13,6 +13,7 @@ Modules:
 from keep_active.config import KeepActiveConfig
 from keep_active.controller import KeepActiveController
 from keep_active.mouse import MouseOperations, PyAutoGUIMouseOperations
+from keep_active.snippets import get_random_snippet
 
 __version__ = "0.1.0"
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "KeepActiveController",
     "MouseOperations",
     "PyAutoGUIMouseOperations",
+    "get_random_snippet",
 ]

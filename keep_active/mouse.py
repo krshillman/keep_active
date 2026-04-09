@@ -6,6 +6,7 @@ dependency injection and easy testing. It defines a Protocol for mouse
 operations and provides a concrete implementation using pyautogui.
 """
 
+import time
 from dataclasses import dataclass
 from typing import Protocol, Tuple
 
@@ -114,6 +115,20 @@ class MouseOperations(Protocol):
         """
         ...
 
+    def click(self) -> None:
+        """Perform a single click at the current mouse position."""
+        ...
+
+    def type_text(self, text: str, interval: float = 0.05) -> None:
+        """
+        Type text character by character, simulating keyboard input.
+
+        Args:
+            text: The text to type.
+            interval: Time in seconds between each keystroke.
+        """
+        ...
+
 
 class PyAutoGUIMouseOperations:
     """
@@ -181,3 +196,24 @@ class PyAutoGUIMouseOperations:
             enabled: True to enable failsafe, False to disable.
         """
         self._pyautogui.FAILSAFE = enabled
+
+    def click(self) -> None:
+        """Perform a single click at the current mouse position using pyautogui."""
+        self._pyautogui.click()
+
+    def type_text(self, text: str, interval: float = 0.05) -> None:
+        """
+        Type text character by character using pyautogui.
+
+        Args:
+            text: The text to type.
+            interval: Time in seconds between each keystroke.
+        """
+        for char in text:
+            if char == "\n":
+                self._pyautogui.press("enter")
+            elif char == "\t":
+                self._pyautogui.press("tab")
+            else:
+                self._pyautogui.write(char, interval=0)
+            time.sleep(interval)
